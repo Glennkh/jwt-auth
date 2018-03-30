@@ -1,9 +1,9 @@
-var express = require('express');
-var router = express.Router();
-let passport = require('passport');
-let jwt = require('jsonwebtoken');
-var User = require('../models/User');
-let config = require('../config');
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+const config = require('../config');
 
 // Register new users
 router.post('/register', function(req, res) {
@@ -35,7 +35,7 @@ router.post('/register', function(req, res) {
 });
 
 router.get('/', function(req, res) {
-  User.find({}, function(err, users) {
+  User.find({}, 'email _id', function(err, users) {
     res.json(users);
   });
 });
@@ -57,7 +57,7 @@ router.post('/auth', (req, res) => {
       user.comparePassword(req.body.password, function(err, isMatch) {
         if (isMatch && !err) {
           // Create token if the password matched and no error was thrown
-          var token = jwt.sign(user.toObject(), config.auth.secret, {
+          const token = jwt.sign(user.toObject(), config.auth.secret, {
             expiresIn: "2 days"
           });
           res.json({

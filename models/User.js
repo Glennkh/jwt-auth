@@ -1,7 +1,7 @@
-let mongoose = require('mongoose');
-let bcrypt = require('bcrypt');
-let saltRounds = 10;
-let Schema = mongoose.Schema;
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const Schema = mongoose.Schema;
 
 // Usershema define how user is stored in db
 var UserSchema = new Schema({
@@ -34,8 +34,6 @@ UserSchema.pre('save', function(next) {
 // Compare password to database for logging in
 UserSchema.methods.comparePassword = function(pw, cb) {
   bcrypt.compare(pw, this.password, function(err, isMatch) {
-    console.log(pw);
-    console.log(this.password);
     if (err) {
       return cb(err);
     }

@@ -1,18 +1,18 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var passport = require('passport');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const passport = require('passport');
 
-var config = require('./config');
+const config = require('./config');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+const index = require('./routes/index');
+const users = require('./routes/users');
 
-var app = express();
+const app = express();
 
 // database connection
 mongoose.connect(config.database.local);
@@ -39,7 +39,7 @@ app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
+  const err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
