@@ -60,3 +60,4 @@ typings/
 # db config files and secret
 config/index.js
 
+.DS_STORE
