@@ -33,6 +33,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 require('./config/passport')(passport);
 
+// CORS
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
+
 // Routes 
 app.use('/', index);
 app.use('/users', users);
