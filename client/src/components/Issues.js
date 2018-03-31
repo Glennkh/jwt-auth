@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 class Issues extends Component {
@@ -15,7 +16,7 @@ class Issues extends Component {
   }
 
   getIssues(){
-    axios.get('http://localhost:5000/users/')
+    axios.get('/api/issues')
       .then(res => {
         this.setState({issues: res.data}, () =>{
           // console.log(this.state)
@@ -31,7 +32,11 @@ class Issues extends Component {
         <h1>Issues</h1>
         {issueItems.map((issue, i) => {
           return (
-            <li>{issue.email}</li>
+            <li key={i}>
+              <Link to={`/issues/${issue._id}`}>
+                {issue.name}
+              </Link>
+            </li>
           )
         })}
       </div>
