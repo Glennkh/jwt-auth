@@ -19,7 +19,21 @@ class Navbar extends Component {
     });
   }
 
+  logout(){
+    // localStorage.removeItem('token');
+
+    this.props.history.push("/");
+  }
+
   render() {
+
+    const button = localStorage.getItem('token') ? (
+      <Link className="btn btn-outline-primary" to="/logout">Sign out</Link>
+    ) : (
+      <Link className="btn btn-outline-primary" to="/login">Sign in</Link>
+      
+    );
+
     return (
       <div className="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
         <h5 className="my-0 mr-md-auto font-weight-normal"><Link className="p-2 text-dark" to="/">Fixbit</Link></h5>
@@ -27,9 +41,8 @@ class Navbar extends Component {
         <Link className="p-2 text-dark" to="/issues">Issues</Link>
         <Link className="p-2 text-dark" to="/issues/create">Create Issues</Link>
         <Link className="p-2 text-dark" to="/about">About</Link>
-        <Link className="p-2 text-dark" to="/login">Log in</Link>
         </nav>
-        <Link className="btn btn-outline-primary" to="/signup">Sign up</Link>
+        {button}
       </div>
     );
   }

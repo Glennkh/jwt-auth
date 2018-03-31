@@ -8,6 +8,8 @@ import CreateIssue from './Issues/Create';
 import UpdateIssue from './Issues/Update';
 import Login from './Auth/Login';
 import Register from './Auth/Register';
+import Dashboard from './Dashboard';
+import Logout from './Auth/Logout';
 
 const Main = () => (
   <main>
@@ -18,9 +20,10 @@ const Main = () => (
       <Route exact path="/issues/update/:id" component={UpdateIssue}/>
       <Route exact path="/issues/:id" component={ReadIssue}/>
       <Route exact path="/login" component={Login}/>
+      <Route exact path="/logout" component={Logout}/>
       <Route exact path="/signup" component={Register}/>
       <Route exact path="/about" component={About}/>
-      
+      <Route exact path="/dashboard" component={Dashboard}/>
     </Switch>
   </main>
 )
