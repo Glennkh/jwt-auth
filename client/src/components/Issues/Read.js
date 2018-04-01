@@ -42,8 +42,9 @@ class ReadIssue extends Component {
           <p>Floor: {issue.floor}</p>
           <p>Room: {issue.room}</p>
           <p>Created At: {issue.createdAt}</p>
+          
           <Link className="btn btn-outline-primary" to={`update/${issue._id}`}>Edit</Link>
-          <button onClick={this.onDelete.bind(this, this.state.issue._id)} className="btn btn-danger">Delete</button>
+          <button onClick={this.onDelete.bind(this, this.state.issue._id)} className="btn btn-outline-danger">Delete</button>
       </div>
     );
   }

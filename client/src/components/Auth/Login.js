@@ -8,9 +8,11 @@ class Login extends Component {
     super(props);
     this.state = {
       email: '',
-      password: ''
+      password: '',
+      message: ''
     };
   }
+
   onChange = (e) => {
     const state = this.state
     state[e.target.name] = e.target.value;
@@ -24,23 +26,48 @@ class Login extends Component {
 
     axios.post('/api/users/signin', { email, password })
       .then((res) => {
-        localStorage.setItem('token', "Bearer " + res.data.token);
-        this.props.history.push("/dashboard");
+
+        if (!res.data.success) {
+          this.setState({ message: res.data.message});
+        } else {
+          
+          localStorage.setItem('token', "Bearer " + res.data.token);
+          
+          this.props.history
+          .push({
+            pathname: '/dashboard',
+            state: { message: res.data.message }
+          });
+
+        }
+
+        
       });
   }
 
   render() {
-    const { email, password } = this.state;
+    const { email, password, message } = this.state;
     return (
       <div className="container">
+        { message &&
+          <div className="alert alert-danger" role="alert">
+            {message}
+          </div>
+        }
         <form className="form-signin" onSubmit={this.onSubmit}>
           <h2 className="form-signin-heading">Login</h2>
-          <label htmlFor="inputEmail" className="sr-only">Email address</label>
-          <input type="email" className="form-control" placeholder="Email address" name="email" value={email} onChange={this.onChange} required/>
-          <label htmlFor="inputPassword" className="sr-only">Password</label>
-          <input type="password" className="form-control" placeholder="Password" name="password" value={password} onChange={this.onChange} required/>
-          <small>Don't have an account? <Link to="/signup">Register</Link></small>
+          <div className="form-group">
+            <label >Email address</label>
+            <input type="email" className="form-control" name="email" value={email} onChange={this.onChange} required placeholder="Enter email" />
+          </div>
+          <div className="form-group">
+            <label >Password</label>
+            <input type="password" className="form-control" name ="password" value={password} onChange={this.onChange} required placeholder="Password" />
+          </div>
           <button className="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+          <div className="text-center">
+            <small>Don't have an account? <Link to="/signup">Register</Link></small>
+          </div>
         </form>
       </div>
     );

@@ -11,20 +11,14 @@ class Dashboard extends Component {
   }
 
   componentWillMount(){
-
     axios.get('/api/users/dashboard',
     { headers: {
       "Authorization": localStorage.getItem('token')
       }
     })
     .then((res) => {
-      
-      this.setState({message: res.data}, () =>{
-        // console.log(this.state);
-      });
-
+      this.setState({message: res.data});
     });
-
   }
 
   render() {
@@ -37,6 +31,7 @@ class Dashboard extends Component {
       </div>
     );
   }
+  
 }
 
 export default Dashboard;

@@ -19,19 +19,12 @@ class Navbar extends Component {
     });
   }
 
-  logout(){
-    // localStorage.removeItem('token');
-
-    this.props.history.push("/");
-  }
-
   render() {
 
     const button = localStorage.getItem('token') ? (
       <Link className="btn btn-outline-primary" to="/logout">Sign out</Link>
     ) : (
       <Link className="btn btn-outline-primary" to="/login">Sign in</Link>
-      
     );
 
     return (
