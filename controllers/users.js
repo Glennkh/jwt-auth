@@ -6,44 +6,47 @@ const config = require('../config');
 
 module.exports = {
 
-  // Return list of users email and their id
-  index: (req, res, next) => {
-    User.find({}, 'email _id', function(err, users) {
-      res.json(users);
-    });
+  // Get all users
+  index: async (req, res, next) => {
+    const users = await User.find({});
+    res.status(200).json(users); // 201 - OK
   },
 
   // Authenticate user return jwt token to be store in local storage on client side
-  register: (req, res, next) => {
-    if (!req.body.email || !req.body.password) {
-      res.json({
-        success: false,
-        message: 'Please enter email and password.'
-      });
-    } else {
-      let newUser = new User({
-        email: req.body.email,
-        password: req.body.password
-      });
-  
-      // Attempt to save the user
-      newUser.save(function(err) {
-        if (err) {
-          return res.json({
-            success: false,
-            message: 'That email address already exists.'
-          });
-        }
-        res.json({
-          success: true,
-          message: 'Successfully created new user.'
-        });
-      });
-    }
+  register: async (req, res, next) => {
+    const newUser = new User(req.body);
+    const user = await newUser.save();
+    res.status(201).json(user); // 201 - Created
   },
 
+  // Get User information
+  getUser: async (req, res, next) => {
+    const {userId } = req.params;
+    const user = await User.findById(userId);
+    res.status(200).json(user);
+  },
+
+  // Get User information
+  replaceUser: async (req, res, next) => {
+    // TODO: Enforce body contains all fields
+    const {userId } = req.params;
+    const newUser = req.body;
+    const result = await User.findByIdAndUpdate(userId,newUser);
+    res.status(200).json({success: true});
+  },
+
+  // Get User information
+  updateUser: async (req, res, next) => {
+    // Body may contain any number of fields
+    const {userId } = req.params;
+    const newUser = req.body;
+    const result = await User.findByIdAndUpdate(userId,newUser);
+    res.status(200).json({success: true});
+  },
+  
   // Authenticate user
-  signin: (req, res, next) => {
+  // TODO: Convert to async/await function
+  auth: (req, res, next) => {
     User.findOne({
       email: req.body.email
     }, function(err, user) {
@@ -79,42 +82,101 @@ module.exports = {
   },
 
   // View all issues created by user
-  getIssues: (req, res, next) => {
-    User.findById({_id: req.params.id}).populate('issues').exec(function(err, user) {
-      res.json(user.populate().issues);
-    });
+  getIssues: async (req, res, next) => {
+    const { userId } = req.params;
+    const user = await User.findById(userId).populate('issues');
+    res.status(200).json(user.issues);
   },
 
-  // Create a issue
-  newIssue: (req, res, next) =>{
+  getDashboard: (req, res, next) => {
+    res.send('It worked! User id is: ' + req.user.email + '.');
+  },
 
-    const newIssue = new Issue({
-      name: req.body.name,
-      description: req.body.description,
-      building: req.body.building,
-      floor: req.body.floor,
-      room: req.body.room,
-      creator: req.user._id
-    });
+  newIssue: async (req, res, next) => {
+    // Get Id from url
+    const userId  = req.user._id;
+    // Create new issue
+    const newIssue = new Issue(req.body);
+    // Get user
+    const user = await User.findById(userId);
+    // Assign user and issue creator
+    newIssue.creator = user;
+    // Save the issue
+    await newIssue.save();
+    // Add the new issue to the users issue array
+    user.issues.push(newIssue);
+    // Save the updated user
+    await user.save();
+    // Send status code 201 - Created and new Issue as json
+    res.status(201).json(newIssue);
+  },
 
-    User.findById(req.user._id, (err, user, next) => {
-      if (err) return next(err);
-      user.issues.push(newIssue);
-      user.save();
-    });
-
-
-    newIssue.save(function(err) {
-      if (err) return next(err);
-      
-      res.json({
-        success: true,
-        message: 'Successfully created new issue.'
-      });
-
-    });
-    
-  }
-
-  
 }
+
+  // OLD ROUTES
+  // // Authenticate user return jwt token to be store in local storage on client side
+  // register: (req, res, next) => {
+  //   if (!req.body.email || !req.body.password) {
+  //     res.json({
+  //       success: false,
+  //       message: 'Please enter email and password.'
+  //     });
+  //   } else {
+  //     let newUser = new User({
+  //       email: req.body.email,
+  //       password: req.body.password
+  //     });
+  
+  //     // Attempt to save the user
+  //     newUser.save(function(err) {
+  //       if (err) {
+  //         return res.json({
+  //           success: false,
+  //           message: 'That email address already exists.'
+  //         });
+  //       }
+  //       res.json({
+  //         success: true,
+  //         message: 'Successfully created new user.'
+  //       });
+  //     });
+  //   }
+  // },
+
+  // // View all issues created by user
+  // getIssues: (req, res, next) => {
+  //   User.findById({_id: req.params.id}).populate('issues').exec(function(err, user) {
+  //     res.json(user.populate().issues);
+  //   });
+  // },
+  // Create a issue
+  // newIssue: (req, res, next) =>{
+
+  //   const newIssue = new Issue({
+  //     name: req.body.name,
+  //     description: req.body.description,
+  //     building: req.body.building,
+  //     floor: req.body.floor,
+  //     room: req.body.room,
+  //     creator: req.user._id
+  //   });
+
+  //   User.findById(req.user._id, (err, user, next) => {
+  //     if (err) return next(err);
+  //     user.issues.push(newIssue);
+  //     user.save();
+  //   });
+
+
+  //   newIssue.save(function(err) {
+  //     if (err) return next(err);
+      
+  //     res.json({
+  //       success: true,
+  //       message: 'Successfully created new issue.'
+  //     });
+
+  //   });
+    
+  // }
+
