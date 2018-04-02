@@ -14,7 +14,8 @@ var UserSchema = new Schema({
   password: {
     type: String,
     required: true
-  }
+  },
+  issues: [{ type: Schema.Types.ObjectId, ref: 'Issue' }]
 });
 
 // Hash password using bcrypt

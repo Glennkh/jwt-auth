@@ -17,6 +17,9 @@ var IssueSchema = new Schema({
   },
   room: {
     type: String,
+  },
+  creator: {
+    type: Schema.Types.ObjectId, ref: 'User'
   }
 },
 { timestamps: true });

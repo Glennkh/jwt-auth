@@ -1,81 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
-const config = require('../config');
+const UsersController = require('../controllers/users');
+
+router.get('/', UsersController.index);
 
 // Register new users
-router.post('/register', function(req, res) {
-  if (!req.body.email || !req.body.password) {
-    res.json({
-      success: false,
-      message: 'Please enter email and password.'
-    });
-  } else {
-    let newUser = new User({
-      email: req.body.email,
-      password: req.body.password
-    });
+router.post('/register', UsersController.register);
 
-    // Attempt to save the user
-    newUser.save(function(err) {
-      if (err) {
-        return res.json({
-          success: false,
-          message: 'That email address already exists.'
-        });
-      }
-      res.json({
-        success: true,
-        message: 'Successfully created new user.'
-      });
-    });
-  }
-});
+router.post('/signin', UsersController.signin);
 
-router.get('/', function(req, res) {
-  User.find({}, 'email _id', function(err, users) {
-    res.json(users);
-  });
-});
+router.get('/:id/issues', UsersController.getIssues);
 
-// Authenticate the user and get a JSON Web Token to include in the header of future requests.
-router.post('/signin', (req, res) => {
-  User.findOne({
-    email: req.body.email
-  }, function(err, user) {
-    if (err) throw err;
-
-    if (!user) {
-      res.send({
-        success: false,
-        message: 'Authentication failed. User not found.'
-      });
-    } else {
-      // Check if password matches
-      user.comparePassword(req.body.password, function(err, isMatch) {
-        if (isMatch && !err) {
-          // Create token if the password matched and no error was thrown
-          const token = jwt.sign(user.toObject(), config.auth.secret, {
-            expiresIn: "2 days"
-          });
-          res.json({
-            success: true,
-            message: 'Authentication successfull',
-            token
-          });
-        } else {
-          res.send({
-            success: false,
-            message: 'Authentication failed. Passwords did not match.'
-          });
-        }
-      });
-    }
-  });
-});
-
+// Authenticated route new issue can not be created without jwt token supplied at login
+router.post('/newIssue', passport.authenticate('jwt', {session: false}), UsersController.newIssue);
 
 // Example of required auth: protect dashboard route with JWT
 router.get('/dashboard', passport.authenticate('jwt', {
@@ -83,6 +21,5 @@ router.get('/dashboard', passport.authenticate('jwt', {
 }), function(req, res) {
   res.send('It worked! User id is: ' + req.user._id + '.');
 });
-
 
 module.exports = router;
