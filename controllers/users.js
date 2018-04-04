@@ -16,7 +16,13 @@ module.exports = {
   register: async (req, res, next) => {
     const newUser = new User(req.body);
     const user = await newUser.save();
-    res.status(201).json(user); // 201 - Created
+    console.log(user);
+    if(!user) {
+      res.status(409).json({message: "User already exists"});
+    } else {
+      res.status(201).json(user); // 201 - Created
+    }  
+    
   },
 
   // Get User information
@@ -96,7 +102,13 @@ module.exports = {
     // Get Id from url
     const userId  = req.user._id;
     // Create new issue
-    const newIssue = new Issue(req.body);
+    const newIssue = new Issue({
+      "name": req.body.name,
+      "description": req.body.description,
+      "building": req.body.building,
+      "floor": req.body.floor,
+      "room": req.body.room
+    });
     // Get user
     const user = await User.findById(userId);
     // Assign user and issue creator

@@ -23,7 +23,7 @@ class Register extends Component {
 
     const { email, password } = this.state;
 
-    axios.post('/api/users/register', { email, password })
+    axios.post('/api/users', { email, password })
       .then((res) => {
 
         if (!res.data.success) {

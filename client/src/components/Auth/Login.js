@@ -24,7 +24,7 @@ class Login extends Component {
 
     const { email, password } = this.state;
 
-    axios.post('/api/users/signin', { email, password })
+    axios.post('/api/users/auth', { email, password })
       .then((res) => {
 
         if (!res.data.success) {
@@ -48,7 +48,7 @@ class Login extends Component {
   render() {
     const { email, password, message } = this.state;
     return (
-      <div className="container">
+      <div>
         { message &&
           <div className="alert alert-danger" role="alert">
             {message}
